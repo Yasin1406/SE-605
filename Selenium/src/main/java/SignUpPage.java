@@ -15,35 +15,23 @@ public class SignUpPage {
     private final WebDriverWait wait;
 
     // Locators
-    private final By createNewAccountLink = By.linkText("Create new account");
     private final By firstNameInput = By.id("user_first_name");
     private final By lastNameInput = By.id("user_last_name");
     private final By emailInput = By.id("user_email");
     private final By passwordInput = By.id("user_password");
     private final By passwordConfirmationInput = By.id("user_password_confirmation");
     private final By submitButton = By.cssSelector("button");
-    private final By errorMessage = By.cssSelector(".error"); // Adjust if needed based on actual DOM
+    private final By nameDisplay = By.cssSelector("span:nth-child(3)");
+    private final By errorMessage = By.cssSelector(".error");
 
     public SignUpPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public void navigateToSignIn() {
-        logger.info("Navigating to http://localhost:4000/sign_in");
-        driver.get("http://localhost:4000/sign_in");
-    }
-
     public void navigateToSignUp() {
         logger.info("Navigating to http://localhost:4000/sign_up");
         driver.get("http://localhost:4000/sign_up");
-    }
-
-    public void clickCreateNewAccountLink() {
-        logger.info("Clicking 'Create new account' link");
-        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(createNewAccountLink));
-        link.click();
-        logger.info("Clicked 'Create new account' link");
     }
 
     public void enterFirstName(String firstName) {
@@ -91,6 +79,14 @@ public class SignUpPage {
         WebElement button = wait.until(ExpectedConditions.elementToBeClickable(submitButton));
         button.click();
         logger.info("Clicked submit button");
+    }
+
+    public String getDisplayedName() {
+        logger.info("Retrieving displayed name");
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(nameDisplay));
+        String text = element.getText();
+        logger.info("Retrieved displayed name: '{}'", text);
+        return text;
     }
 
     public String getErrorMessage() {

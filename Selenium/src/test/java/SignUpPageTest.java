@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class SignUpPageTest {
-    private static final Logger logger = LoggerFactory.getLogger(CreateUserTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SignUpPageTest.class);
     private WebDriver driver;
     private SignUpPage signUpPage;
 
@@ -29,7 +29,7 @@ public class SignUpPageTest {
 
         driver = new FirefoxDriver(options);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
-        driver.manage().window().maximize(); // Maximize window instead of setting specific size
+        driver.manage().window().maximize();
         signUpPage = new SignUpPage(driver);
         logger.info("WebDriver and SignUpPage initialized successfully");
     }
@@ -43,41 +43,37 @@ public class SignUpPageTest {
     }
 
     @Test
-    public void createUserTest() {
+    public void testSuccessfulSignUp() {
         try {
-            signUpPage.navigateToSignIn();
-            signUpPage.clickCreateNewAccountLink();
+            signUpPage.navigateToSignUp();
             signUpPage.enterFirstName("Mohammed");
             signUpPage.enterLastName("Yasin");
             signUpPage.enterEmail("bsse1406@iit.du.ac.bd");
-            signUpPage.enterPassword("1406");
-            signUpPage.enterPasswordConfirmation("1406");
-            signUpPage.clickSubmitButton();
-            // Assuming the first submission fails due to weak password
             signUpPage.enterPassword("Yasin1406");
             signUpPage.enterPasswordConfirmation("Yasin1406");
             signUpPage.clickSubmitButton();
-            logger.info("createUserTest completed successfully");
+            assertThat(signUpPage.getDisplayedName(), is("Mohammed Yasin"));
+            logger.info("testSuccessfulSignUp completed successfully");
         } catch (Exception e) {
-            logger.error("createUserTest failed due to: {}", e.getMessage(), e);
+            logger.error("testSuccessfulSignUp failed due to: {}", e.getMessage(), e);
             throw e;
         }
     }
 
     @Test
-    public void signUpWithExistingEmail() {
+    public void testSignUpWithExistingEmail() {
         try {
             signUpPage.navigateToSignUp();
-            signUpPage.enterFirstName("Mohammed");
-            signUpPage.enterLastName("Yasin");
+            signUpPage.enterFirstName("John");
+            signUpPage.enterLastName("Doe");
             signUpPage.enterEmail("john@phoenix-trello.com");
-            signUpPage.enterPassword("yasin");
-            signUpPage.enterPasswordConfirmation("yasin");
+            signUpPage.enterPassword("john1234");
+            signUpPage.enterPasswordConfirmation("john1234");
             signUpPage.clickSubmitButton();
             assertThat(signUpPage.getErrorMessage(), is("Email already taken"));
-            logger.info("signUpWithExistingEmail completed successfully");
+            logger.info("testSignUpWithExistingEmail completed successfully");
         } catch (Exception e) {
-            logger.error("signUpWithExistingEmail failed due to: {}", e.getMessage(), e);
+            logger.error("testSignUpWithExistingEmail failed due to: {}", e.getMessage(), e);
             throw e;
         }
     }
