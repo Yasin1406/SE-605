@@ -53,6 +53,15 @@ public class LoginPage {
         logger.info("Clicked submit button");
     }
 
+    public void performLogin(String email, String password) {
+        logger.info("Performing login with email '{}'", email);
+        navigateToLogin();
+        enterEmail(email);
+        enterPassword(password);
+        clickSubmitButton();
+        logger.info("Login attempt completed");
+    }
+
     public String getDisplayedName() {
         logger.info("Retrieving displayed name");
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(nameDisplay));

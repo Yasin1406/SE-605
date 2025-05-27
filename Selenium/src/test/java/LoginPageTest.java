@@ -21,7 +21,7 @@ public class LoginPageTest {
     @Before
     public void setUp() {
         // Force specific GeckoDriver version compatible with Firefox ESR
-        WebDriverManager.firefoxdriver().driverVersion("0.35.0").setup();
+        WebDriverManager.firefoxdriver().driverVersion("0.36.0").setup();
 
         // Configure Firefox options to use ESR explicitly
         FirefoxOptions options = new FirefoxOptions();

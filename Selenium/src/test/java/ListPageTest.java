@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-public class BoardPageTest {
-    private static final Logger logger = LoggerFactory.getLogger(BoardPageTest.class);
+public class ListPageTest {
+    private static final Logger logger = LoggerFactory.getLogger(ListPageTest.class);
     private WebDriver driver;
     private BoardPage boardPage;
+    private ListPage listPage;
     private LoginPage loginPage;
 
     @Before
@@ -28,8 +30,9 @@ public class BoardPageTest {
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
         driver.manage().window().setSize(new Dimension(960, 1012));
         boardPage = new BoardPage(driver);
+        listPage = new ListPage(driver);
         loginPage = new LoginPage(driver);
-        logger.info("WebDriver, BoardPage, and LoginPage initialized successfully");
+        logger.info("WebDriver, BoardPage, ListPage, and LoginPage initialized successfully");
     }
 
     @After
@@ -41,14 +44,15 @@ public class BoardPageTest {
     }
 
     @Test
-    public void testCreateBoard() {
+    public void testCreateList() {
         try {
             loginPage.performLogin("john@phoenix-trello.com", "12345678");
             boardPage.createBoard("Mohammed");
-            assertEquals("Mohammed", boardPage.getBoardNameDisplay());
-            logger.info("testCreateBoard completed successfully");
+            listPage.createList("Yasin");
+            assertThat(listPage.getListNameDisplay(), is("Yasin"));
+            logger.info("testCreateList completed successfully");
         } catch (Exception e) {
-            logger.error("testCreateBoard failed due to: {}. Page source: {}", e.getMessage(), boardPage.getPageSourceOnError(), e);
+            logger.error("testCreateList failed due to: {}. Page source: {}", e.getMessage(), listPage.getPageSourceOnError(), e);
             throw e;
         }
     }

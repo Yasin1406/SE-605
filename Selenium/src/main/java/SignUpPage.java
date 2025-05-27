@@ -1,5 +1,4 @@
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,7 +20,6 @@ public class SignUpPage {
     private final By passwordInput = By.id("user_password");
     private final By passwordConfirmationInput = By.id("user_password_confirmation");
     private final By submitButton = By.cssSelector("button");
-    private final By nameDisplay = By.cssSelector("span:nth-child(3)");
     private final By errorMessage = By.cssSelector(".error");
 
     public SignUpPage(WebDriver driver) {
@@ -29,12 +27,30 @@ public class SignUpPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public void navigateToSignUp() {
-        logger.info("Navigating to http://localhost:4000/sign_up");
+    public void performSignUp(String firstName, String lastName, String email, String password, String passwordConfirmation) {
+        logger.info("Performing signup for user '{} {}' with email '{}'", firstName, lastName, email);
         driver.get("http://localhost:4000/sign_up");
+        logger.info("Navigating to http://localhost:4000/sign_up");
+
+        enterFirstName(firstName);
+        enterLastName(lastName);
+        enterEmail(email);
+        enterPassword(password);
+        enterPasswordConfirmation(passwordConfirmation);
+        clickSubmitButton();
+
+        logger.info("Signup attempt completed for email '{}'", email);
     }
 
-    public void enterFirstName(String firstName) {
+    public String getErrorMessage() {
+        logger.info("Retrieving error message");
+        WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
+        String errorText = errorElement.getText();
+        logger.info("Retrieved error message: '{}'", errorText);
+        return errorText;
+    }
+
+    private void enterFirstName(String firstName) {
         logger.info("Entering first name '{}'", firstName);
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(firstNameInput));
         input.clear();
@@ -42,7 +58,7 @@ public class SignUpPage {
         logger.info("Entered first name '{}'", firstName);
     }
 
-    public void enterLastName(String lastName) {
+    private void enterLastName(String lastName) {
         logger.info("Entering last name '{}'", lastName);
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(lastNameInput));
         input.clear();
@@ -50,7 +66,7 @@ public class SignUpPage {
         logger.info("Entered last name '{}'", lastName);
     }
 
-    public void enterEmail(String email) {
+    private void enterEmail(String email) {
         logger.info("Entering email '{}'", email);
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(emailInput));
         input.clear();
@@ -58,7 +74,7 @@ public class SignUpPage {
         logger.info("Entered email '{}'", email);
     }
 
-    public void enterPassword(String password) {
+    private void enterPassword(String password) {
         logger.info("Entering password");
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(passwordInput));
         input.clear();
@@ -66,7 +82,7 @@ public class SignUpPage {
         logger.info("Entered password");
     }
 
-    public void enterPasswordConfirmation(String passwordConfirmation) {
+    private void enterPasswordConfirmation(String passwordConfirmation) {
         logger.info("Entering password confirmation");
         WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(passwordConfirmationInput));
         input.clear();
@@ -74,26 +90,15 @@ public class SignUpPage {
         logger.info("Entered password confirmation");
     }
 
-    public void clickSubmitButton() {
+    private void clickSubmitButton() {
         logger.info("Clicking submit button");
         WebElement button = wait.until(ExpectedConditions.elementToBeClickable(submitButton));
         button.click();
         logger.info("Clicked submit button");
     }
 
-    public String getDisplayedName() {
-        logger.info("Retrieving displayed name");
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(nameDisplay));
-        String text = element.getText();
-        logger.info("Retrieved displayed name: '{}'", text);
-        return text;
-    }
-
-    public String getErrorMessage() {
-        logger.info("Retrieving error message");
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
-        String text = element.getText();
-        logger.info("Retrieved error message: '{}'", text);
-        return text;
+    public String getPageSource() {
+        logger.info("Retrieving page source for debugging");
+        return driver.getPageSource();
     }
 }
