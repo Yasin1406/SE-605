@@ -19,6 +19,7 @@ public class LoginPage {
     private final By submitButton = By.cssSelector("button");
     private final By nameDisplay = By.cssSelector("span:nth-child(3)");
     private final By errorMessage = By.cssSelector(".error");
+    private final By signOutButton = By.id("crawler-sign-out");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
@@ -62,6 +63,13 @@ public class LoginPage {
         logger.info("Login attempt completed");
     }
 
+    public void signOut() {
+        logger.info("Clicking sign out button");
+        WebElement button = wait.until(ExpectedConditions.elementToBeClickable(signOutButton));
+        button.click();
+        logger.info("Clicked sign out button");
+    }
+
     public String getDisplayedName() {
         logger.info("Retrieving displayed name");
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(nameDisplay));
@@ -75,6 +83,14 @@ public class LoginPage {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
         String text = element.getText();
         logger.info("Retrieved error message: '{}'", text);
+        return text;
+    }
+
+    public String getSignInButtonText() {
+        logger.info("Retrieving sign in button text");
+        WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(submitButton));
+        String text = button.getText();
+        logger.info("Retrieved sign in button text: '{}'", text);
         return text;
     }
 }

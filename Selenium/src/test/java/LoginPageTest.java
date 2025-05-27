@@ -101,4 +101,17 @@ public class LoginPageTest {
             throw e;
         }
     }
+
+    @Test
+    public void testSignOut() {
+        try {
+            loginPage.performLogin("john@phoenix-trello.com", "12345678");
+            loginPage.signOut();
+            assertThat(loginPage.getSignInButtonText(), is("Sign in"));
+            logger.info("testSignOut completed successfully");
+        } catch (Exception e) {
+            logger.error("testSignOut failed due to: {}. Page source: {}", e.getMessage(), driver.getPageSource(), e);
+            throw e;
+        }
+    }
 }

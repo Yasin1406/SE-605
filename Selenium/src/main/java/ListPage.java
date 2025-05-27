@@ -32,6 +32,20 @@ public class ListPage {
         logger.info("List creation completed");
     }
 
+    public void updateListName(String newListName) {
+        logger.info("Updating list name to '{}'", newListName);
+        WebElement listNameHeader = wait.until(ExpectedConditions.elementToBeClickable(listNameDisplay));
+        listNameHeader.click();
+        logger.info("Clicked list name header to edit");
+        WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(listNameInput));
+        input.clear();
+        input.sendKeys(newListName);
+        logger.info("Entered new list name '{}'", newListName);
+        WebElement button = wait.until(ExpectedConditions.elementToBeClickable(listSubmitButton));
+        button.click();
+        logger.info("Clicked submit button to update list name");
+    }
+
     public void clickListInnerContainer() {
         logger.info("Clicking list inner container");
         WebElement container = wait.until(ExpectedConditions.elementToBeClickable(listInnerContainer));

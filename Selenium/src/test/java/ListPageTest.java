@@ -56,4 +56,19 @@ public class ListPageTest {
             throw e;
         }
     }
+
+    @Test
+    public void testUpdateList() {
+        try {
+            loginPage.performLogin("john@phoenix-trello.com", "12345678");
+            boardPage.createBoard("Board");
+            listPage.createList("List");
+            listPage.updateListName("Updated List");
+            assertThat(listPage.getListNameDisplay(), is("Updated List"));
+            logger.info("testUpdateList completed successfully");
+        } catch (Exception e) {
+            logger.error("testUpdateList failed due to: {}. Page source: {}", e.getMessage(), listPage.getPageSourceOnError(), e);
+            throw e;
+        }
+    }
 }
