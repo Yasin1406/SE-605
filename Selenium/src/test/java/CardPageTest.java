@@ -40,7 +40,7 @@ public class CardPageTest {
         logger.info("WebDriver, BoardPage, ListPage, CardPage, LoginPage, and SignUpPage initialized successfully");
 
         // User details
-        String email = "bsse1407@iit.du.ac.bd";
+        String email = "bsse1497@iit.du.ac.bd";
         String password = "munna1407";
         String firstName = "Nowsad Hossen";
         String lastName = "Munna";
@@ -107,6 +107,40 @@ public class CardPageTest {
             logger.info("testMakeComment completed successfully");
         } catch (Exception e) {
             logger.error("testMakeComment failed due to: {}. Page source: {}",
+                    e.getMessage(), cardPage.getPageSourceOnError(), e);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testEditCardDescription() {
+        try {
+            boardPage.createBoard("Board");
+            listPage.createList("List");
+            cardPage.createCard("Card");
+            cardPage.editCardDescription("Card Description");
+            assertThat(cardPage.getCardDescriptionDisplay(), is("Card Description"));
+            cardPage.closeCardModal();
+            logger.info("testEditCardDescription completed successfully");
+        } catch (Exception e) {
+            logger.error("testEditCardDescription failed due to: {}. Page source: {}",
+                    e.getMessage(), cardPage.getPageSourceOnError(), e);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testEditCardName() {
+        try {
+            boardPage.createBoard("Board");
+            listPage.createList("List");
+            cardPage.createCard("Card");
+            cardPage.editCardName("New Card");
+            assertThat(cardPage.getModalCardNameDisplay(), is("New Card"));
+            cardPage.closeCardModal();
+            logger.info("testEditCardName completed successfully");
+        } catch (Exception e) {
+            logger.error("testEditCardName failed due to: {}. Page source: {}",
                     e.getMessage(), cardPage.getPageSourceOnError(), e);
             throw e;
         }

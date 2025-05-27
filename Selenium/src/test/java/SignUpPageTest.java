@@ -42,8 +42,8 @@ public class SignUpPageTest {
     @Test
     public void testSuccessfulSignUp() {
         try {
-            String email = "bsse1407@iit.du.ac.bd";
-            signUpPage.performSignUp("Nowsad Hossen", "Munna", email, "munna1407", "munna1407");
+            String email = "bsse1406@iit.du.ac.bd";
+            signUpPage.performSignUp("Mohammed", "Yasin", email, "yasin1406", "munna1407");
             // Assuming successful signup redirects or shows a success indicator
             logger.info("testSuccessfulSignUp completed successfully");
         } catch (Exception e) {
