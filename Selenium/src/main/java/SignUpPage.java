@@ -13,7 +13,6 @@ public class SignUpPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Locators
     private final By firstNameInput = By.id("user_first_name");
     private final By lastNameInput = By.id("user_last_name");
     private final By emailInput = By.id("user_email");

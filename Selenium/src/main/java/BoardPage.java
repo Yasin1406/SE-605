@@ -17,7 +17,6 @@ public class BoardPage {
     private final WebDriverWait wait;
     private final JavascriptExecutor js;
 
-    // Locators
     private final By addNewBoardLink = By.id("add_new_board");
     private final By boardNameInput = By.id("board_name");
     private final By boardNameDisplay = By.cssSelector("h3");

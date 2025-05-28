@@ -7,13 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.List;
 
 public class CardPage {
     private static final Logger logger = LoggerFactory.getLogger(CardPage.class);
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Locators
     private final By addNewCardLink = By.linkText("Add a new card...");
     private final By cardNameInput = By.id("card_name");
     private final By newCardForm = By.id("new_card_form");
@@ -30,6 +30,14 @@ public class CardPage {
     private final By editNameInput = By.cssSelector("input");
     private final By editSubmitButton = By.cssSelector("button:nth-child(3)");
     private final By descriptionDisplay = By.cssSelector("p");
+    private final By addMemberLink = By.cssSelector(".fa-plus");
+    private final By memberEmailInput = By.id("crawljax_member_email");
+    private final By memberSubmitButton = By.cssSelector("button");
+    private final By memberGravatar = By.cssSelector("footer > .react-gravatar"); // Updated locator
+    private final By addTagButton = By.cssSelector(".button:nth-child(3) > span");
+    private final By blueTag = By.cssSelector(".blue");
+    private final By tagDisplay = By.cssSelector(".tag:nth-child(2)");
+    private final By modalOverlay = By.cssSelector(".md-overlay");
 
     public CardPage(WebDriver driver) {
         this.driver = driver;
@@ -86,10 +94,64 @@ public class CardPage {
 
     public void closeCardModal() {
         logger.info("Closing card modal");
-        WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(closeModalButton));
-        closeButton.click();
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".md-overlay")));
-        logger.info("Card modal closed");
+        try {
+            WebElement closeButton = wait.until(ExpectedConditions.elementToBeClickable(closeModalButton));
+            closeButton.click();
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(modalOverlay));
+            logger.info("Card modal closed successfully");
+        } catch (Exception e) {
+            logger.warn("Failed to close card modal: {}. Attempting alternative close.", e.getMessage());
+            try {
+                driver.findElement(modalOverlay).click();
+                wait.until(ExpectedConditions.invisibilityOfElementLocated(modalOverlay));
+                logger.info("Card modal closed via overlay click");
+            } catch (Exception fallbackEx) {
+                logger.error("Alternative close failed: {}", fallbackEx.getMessage());
+                throw fallbackEx;
+            }
+        }
+    }
+
+    public boolean isModalOpen() {
+        try {
+            return driver.findElements(modalOverlay).size() > 0 && driver.findElement(modalOverlay).isDisplayed();
+        } catch (Exception e) {
+            logger.info("No modal overlay found: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public void addTagToCard() {
+        logger.info("Adding blue tag to card");
+        clickCardContent();
+        WebElement tagButton = wait.until(ExpectedConditions.elementToBeClickable(addTagButton));
+        tagButton.click();
+        logger.info("Clicked add tag button");
+        WebElement blueTagElement = wait.until(ExpectedConditions.elementToBeClickable(blueTag));
+        blueTagElement.click();
+        logger.info("Selected blue tag");
+    }
+
+    public boolean isMemberGravatarPresent() {
+        logger.info("Checking if member gravatar is present");
+        try {
+            WebDriverWait longerWait = new WebDriverWait(driver, Duration.ofSeconds(20));
+            List<WebElement> elements = longerWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(memberGravatar));
+            boolean isPresent = elements.size() > 0;
+            logger.info("Member gravatar present: {}", isPresent);
+            return isPresent;
+        } catch (Exception e) {
+            logger.error("Failed to find gravatar: {}. Page source: {}", e.getMessage(), driver.getPageSource());
+            return false;
+        }
+    }
+
+    public boolean isTagPresent() {
+        logger.info("Checking if tag is present");
+        List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(tagDisplay));
+        boolean isPresent = elements.size() > 0;
+        logger.info("Tag present: {}", isPresent);
+        return isPresent;
     }
 
     public void clickAddNewCard() {
@@ -116,7 +178,6 @@ public class CardPage {
 
     public void clickSubmitButton() {
         logger.info("Clicking submit button");
-        logger.info("Page source before submit: {}", driver.getPageSource());
         WebElement button = wait.until(ExpectedConditions.elementToBeClickable(cardSubmitButton));
         button.click();
         logger.info("Clicked submit button");

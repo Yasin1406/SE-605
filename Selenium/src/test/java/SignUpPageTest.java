@@ -18,6 +18,7 @@ public class SignUpPageTest {
     private static final Logger logger = LoggerFactory.getLogger(SignUpPageTest.class);
     private static WebDriver driver;
     private static SignUpPage signUpPage;
+    private static LoginPage loginPage;
 
     @BeforeClass
     public static void setUpClass() {
@@ -28,7 +29,8 @@ public class SignUpPageTest {
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
         driver.manage().window().setSize(new Dimension(960, 1012));
         signUpPage = new SignUpPage(driver);
-        logger.info("WebDriver and SignUpPage initialized successfully");
+        loginPage = new LoginPage(driver);
+        logger.info("WebDriver, SignUpPage, and LoginPage initialized successfully");
     }
 
     @AfterClass
@@ -42,9 +44,9 @@ public class SignUpPageTest {
     @Test
     public void testSuccessfulSignUp() {
         try {
-            String email = "bsse1406@iit.du.ac.bd";
-            signUpPage.performSignUp("Mohammed", "Yasin", email, "yasin1406", "munna1407");
-            // Assuming successful signup redirects or shows a success indicator
+            driver.manage().window().setSize(new Dimension(960, 1012));
+            signUpPage.performSignUp("Mohammed", "Yasin", "bsse1406@iit.du.ac.bd", "11111", "11111");
+            assertThat(loginPage.getDisplayedName(), is("Mohammed Yasin"));
             logger.info("testSuccessfulSignUp completed successfully");
         } catch (Exception e) {
             logger.error("testSuccessfulSignUp failed due to: {}. Page source: {}",
@@ -74,6 +76,59 @@ public class SignUpPageTest {
             logger.info("testSignUpWithExistingEmail completed successfully");
         } catch (Exception e) {
             logger.error("testSignUpWithExistingEmail failed due to: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testSignUpWithWrongConfirmPassword() {
+        try {
+            driver.manage().window().setSize(new Dimension(960, 1012));
+            signUpPage.performSignUp("Mohammed", "Yasin", "yasin@gmail.com", "yasin", "1406");
+            assertThat(signUpPage.getErrorMessage(), is("Password does not match"));
+            logger.info("testSignUpWithWrongConfirmPassword completed successfully");
+        } catch (Exception e) {
+            logger.error("testSignUpWithWrongConfirmPassword failed due to: {}. Page source: {}",
+                    e.getMessage(), signUpPage.getPageSource(), e);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testSignUpWithInvalidFirstName() {
+        try {
+            signUpPage.performSignUp("1406", "Yasin", "q@q", "11111", "11111");
+            assertThat(signUpPage.getErrorMessage(), is("Invalid name"));
+            logger.info("testSignUpWithInvalidFirstName completed successfully");
+        } catch (Exception e) {
+            logger.error("testSignUpWithInvalidFirstName failed due to: {}. Page source: {}",
+                    e.getMessage(), signUpPage.getPageSource(), e);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testSignUpWithInvalidLastName() {
+        try {
+            signUpPage.performSignUp("Yasin", "1406", "p@p", "11111", "11111");
+            assertThat(signUpPage.getErrorMessage(), is("Invalid name"));
+            logger.info("testSignUpWithInvalidLastName completed successfully");
+        } catch (Exception e) {
+            logger.error("testSignUpWithInvalidLastName failed due to: {}. Page source: {}",
+                    e.getMessage(), signUpPage.getPageSource(), e);
+            throw e;
+        }
+    }
+
+    @Test
+    public void testSignUpWithInvalidName() {
+        try {
+            signUpPage.performSignUp("1406", "1407", "r@r", "11111", "11111");
+            assertThat(signUpPage.getErrorMessage(), is("Invalid name"));
+            logger.info("testSignUpWithInvalidName completed successfully");
+        } catch (Exception e) {
+            logger.error("testSignUpWithInvalidName failed due to: {}. Page source: {}",
+                    e.getMessage(), signUpPage.getPageSource(), e);
             throw e;
         }
     }

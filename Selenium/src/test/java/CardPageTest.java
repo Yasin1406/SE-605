@@ -14,6 +14,7 @@ import java.time.Duration;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class CardPageTest {
     private static final Logger logger = LoggerFactory.getLogger(CardPageTest.class);
@@ -39,18 +40,14 @@ public class CardPageTest {
         signUpPage = new SignUpPage(driver);
         logger.info("WebDriver, BoardPage, ListPage, CardPage, LoginPage, and SignUpPage initialized successfully");
 
-        // User details
-        String email = "bsse1497@iit.du.ac.bd";
+        String email = "bsse1@iit.du.ac.bd";
         String password = "munna1407";
         String firstName = "Nowsad Hossen";
         String lastName = "Munna";
 
         try {
-            // Sign up with the fixed email
             signUpPage.performSignUp(firstName, lastName, email, password, password);
             logger.info("Created new user with email: {}", email);
-
-            // Log in with the new user
             loginPage.performLogin(email, password);
             logger.info("Logged in with user: {}", email);
         } catch (Exception e) {
@@ -63,10 +60,14 @@ public class CardPageTest {
     @After
     public void tearDown() {
         try {
+            if (cardPage.isModalOpen()) {
+                logger.info("Modal is open in tearDown, closing it");
+                cardPage.closeCardModal();
+            }
             boardPage.navigateToHomePage();
             logger.info("Navigated to homepage after test, keeping browser session active");
         } catch (Exception e) {
-            logger.error("Failed to navigate to homepage: {}. Page source: {}",
+            logger.error("Failed to navigate to homepage in tearDown: {}. Page source: {}",
                     e.getMessage(), driver.getPageSource(), e);
             throw e;
         }
@@ -98,6 +99,7 @@ public class CardPageTest {
     @Test
     public void testMakeComment() {
         try {
+            logger.info("Starting testMakeComment");
             boardPage.createBoard("Board");
             listPage.createList("List");
             cardPage.createCard("Card");
@@ -141,6 +143,24 @@ public class CardPageTest {
             logger.info("testEditCardName completed successfully");
         } catch (Exception e) {
             logger.error("testEditCardName failed due to: {}. Page source: {}",
+                    e.getMessage(), cardPage.getPageSourceOnError(), e);
+            throw e;
+        }
+    }
+
+
+    @Test
+    public void testAddTagToCard() {
+        try {
+            boardPage.createBoard("Card");
+            listPage.createList("List");
+            cardPage.createCard("Card");
+            cardPage.addTagToCard();
+            assertTrue(cardPage.isTagPresent());
+            cardPage.closeCardModal();
+            logger.info("testAddTagToCard completed successfully");
+        } catch (Exception e) {
+            logger.error("testAddTagToCard failed due to: {}. Page source: {}",
                     e.getMessage(), cardPage.getPageSourceOnError(), e);
             throw e;
         }

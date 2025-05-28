@@ -13,7 +13,6 @@ public class LoginPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Locators
     private final By emailInput = By.id("user_email");
     private final By passwordInput = By.id("user_password");
     private final By submitButton = By.cssSelector("button");

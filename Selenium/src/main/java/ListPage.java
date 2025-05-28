@@ -13,7 +13,6 @@ public class ListPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Locators
     private final By listInnerContainer = By.cssSelector(".inner");
     private final By listNameInput = By.id("list_name");
     private final By listSubmitButton = By.cssSelector("button[type='submit']");
